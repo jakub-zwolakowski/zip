@@ -56,3 +56,8 @@ test/test.exe.vcxproj.filters
 test/test.exe.vcxproj
 test/test.exe.dir/
 
+# TrustInSoft
+__vfs-common-*.c
+__vfs-common-*.h
+__vfs-tis-*.c
+__vfs-tis-*.h

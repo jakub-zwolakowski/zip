@@ -37,6 +37,9 @@ if (NOT CMAKE_DISABLE_TESTING)
   add_sanitizers(${PROJECT_NAME} ${test_out})
 endif()
 
+# TrustInSoft
+add_subdirectory(trustinsoft)
+
 if (MSVC)
   # Use secure functions by default and suppress warnings about "deprecated" functions
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1")

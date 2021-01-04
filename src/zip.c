@@ -1345,12 +1345,20 @@ static int delete_central_dir_entries(mz_zip_internal_state *pState,
   int end = 0;
   int d_num = 0;
   while (i < entry_num) {
+#ifdef __TRUSTINSOFT_BUGFIX__
+    while ((i < entry_num) && (!deleted_entry_index_array[i])) {
+#else
     while ((!deleted_entry_index_array[i]) && (i < entry_num)) {
+#endif
       i++;
     }
     begin = i;
 
+#ifdef __TRUSTINSOFT_BUGFIX__
+    while ((i < entry_num) && (deleted_entry_index_array[i])) {
+#else
     while ((deleted_entry_index_array[i]) && (i < entry_num)) {
+#endif
       i++;
     }
     end = i;
@@ -1359,14 +1367,22 @@ static int delete_central_dir_entries(mz_zip_internal_state *pState,
 
   i = 0;
   while (i < entry_num) {
+  #ifdef __TRUSTINSOFT_BUGFIX__
+    while ((i < entry_num) && (!deleted_entry_index_array[i])) {
+  #else
     while ((!deleted_entry_index_array[i]) && (i < entry_num)) {
+  #endif
       i++;
     }
     begin = i;
     if (begin == entry_num) {
       break;
     }
+  #ifdef __TRUSTINSOFT_BUGFIX__
+    while ((i < entry_num) && (deleted_entry_index_array[i])) {
+  #else
     while ((deleted_entry_index_array[i]) && (i < entry_num)) {
+  #endif
       i++;
     }
     end = i;
@@ -1409,13 +1425,21 @@ static int delete_entries(struct zip_t *zip,
   int i = 0;
   int deleted_entry_num = 0;
   while (i < entry_num) {
+  #ifdef __TRUSTINSOFT_BUGFIX__
+    while ((i < entry_num) && (entry_mark_array[i].type == MZ_KEEP)) {
+  #else
     while ((entry_mark_array[i].type == MZ_KEEP) && (i < entry_num)) {
+  #endif
       writen_num += entry_mark_array[i].lf_length;
       read_num = writen_num;
       i++;
     }
 
+  #ifdef __TRUSTINSOFT_BUGFIX__
+    while ((i < entry_num) && (entry_mark_array[i].type == MZ_DELETE)) {
+  #else
     while ((entry_mark_array[i].type == MZ_DELETE) && (i < entry_num)) {
+  #endif
       deleted_entry_flag_array[i] = MZ_TRUE;
       read_num += entry_mark_array[i].lf_length;
       deleted_length += entry_mark_array[i].lf_length;
@@ -1423,7 +1447,11 @@ static int delete_entries(struct zip_t *zip,
       deleted_entry_num++;
     }
 
+  #ifdef __TRUSTINSOFT_BUGFIX__
+    while ((i < entry_num) && (entry_mark_array[i].type == MZ_MOVE)) {
+  #else
     while ((entry_mark_array[i].type == MZ_MOVE) && (i < entry_num)) {
+  #endif
       move_length += entry_mark_array[i].lf_length;
       mz_uint8 *p = &MZ_ZIP_ARRAY_ELEMENT(
           &pState->m_central_dir, mz_uint8,
