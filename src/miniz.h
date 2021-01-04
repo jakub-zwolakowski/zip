@@ -221,6 +221,11 @@
 #ifndef MINIZ_HEADER_INCLUDED
 #define MINIZ_HEADER_INCLUDED
 
+#ifdef __TRUSTINSOFT_ANALYZER__
+#undef _LARGEFILE64_SOURCE
+#define _LARGEFILE64_SOURCE 0
+#endif
+
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -5146,18 +5151,22 @@ mz_bool mz_zip_reader_file_stat(mz_zip_archive *pZip, mz_uint file_index,
   // Copy as much of the filename and comment as possible.
   n = MZ_READ_LE16(p + MZ_ZIP_CDH_FILENAME_LEN_OFS);
   n = MZ_MIN(n, MZ_ZIP_MAX_ARCHIVE_FILENAME_SIZE - 1);
-  memcpy(pStat->m_filename, p + MZ_ZIP_CENTRAL_DIR_HEADER_SIZE, n);
-  pStat->m_filename[n] = '\0';
+  if (n > 0) {
+    memcpy(pStat->m_filename, p + MZ_ZIP_CENTRAL_DIR_HEADER_SIZE, n);
+    pStat->m_filename[n] = '\0';
+  }
 
   n = MZ_READ_LE16(p + MZ_ZIP_CDH_COMMENT_LEN_OFS);
   n = MZ_MIN(n, MZ_ZIP_MAX_ARCHIVE_FILE_COMMENT_SIZE - 1);
   pStat->m_comment_size = n;
-  memcpy(pStat->m_comment,
-         p + MZ_ZIP_CENTRAL_DIR_HEADER_SIZE +
-             MZ_READ_LE16(p + MZ_ZIP_CDH_FILENAME_LEN_OFS) +
-             MZ_READ_LE16(p + MZ_ZIP_CDH_EXTRA_LEN_OFS),
-         n);
-  pStat->m_comment[n] = '\0';
+  if (n > 0) {
+    memcpy(pStat->m_comment,
+           p + MZ_ZIP_CENTRAL_DIR_HEADER_SIZE +
+               MZ_READ_LE16(p + MZ_ZIP_CDH_FILENAME_LEN_OFS) +
+               MZ_READ_LE16(p + MZ_ZIP_CDH_EXTRA_LEN_OFS),
+           n);
+    pStat->m_comment[n] = '\0';
+  }
 
   return MZ_TRUE;
 }
@@ -5932,7 +5941,11 @@ mz_bool mz_zip_writer_init_from_reader(mz_zip_archive *pZip,
       return MZ_FALSE;
     pZip->m_pWrite = mz_zip_file_write_func;
     if (NULL ==
+      #ifdef __TRUSTINSOFT_ANALYZER__
+        (pState->m_pFile = fopen(pFilename, "r+b"))) {
+      #else
         (pState->m_pFile = MZ_FREOPEN(pFilename, "r+b", pState->m_pFile))) {
+      #endif
       // The mz_zip_archive is now in a bogus state because pState->m_pFile is
       // NULL, so just close it.
       mz_zip_reader_end(pZip);
