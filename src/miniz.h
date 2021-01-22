@@ -221,6 +221,11 @@
 #ifndef MINIZ_HEADER_INCLUDED
 #define MINIZ_HEADER_INCLUDED
 
+#ifdef __TRUSTINSOFT_ANALYZER__
+#undef _LARGEFILE64_SOURCE
+#define _LARGEFILE64_SOURCE 0
+#endif
+
 #include <stdint.h>
 #include <stdlib.h>
 
