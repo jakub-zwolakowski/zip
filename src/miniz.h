@@ -5941,7 +5941,11 @@ mz_bool mz_zip_writer_init_from_reader(mz_zip_archive *pZip,
       return MZ_FALSE;
     pZip->m_pWrite = mz_zip_file_write_func;
     if (NULL ==
+      #ifdef __TRUSTINSOFT_ANALYZER__
+        (pState->m_pFile = fopen(pFilename, "r+b"))) {
+      #else
         (pState->m_pFile = MZ_FREOPEN(pFilename, "r+b", pState->m_pFile))) {
+      #endif
       // The mz_zip_archive is now in a bogus state because pState->m_pFile is
       // NULL, so just close it.
       mz_zip_reader_end(pZip);
