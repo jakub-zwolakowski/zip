@@ -18,3 +18,10 @@ FILE *freopen(const char *path, const char *mode, FILE *stream) {
   stream = fopen(path, mode);
   return stream;
 }
+
+#include <unistd.h>
+
+int rmdir(const char *path) {
+  /* Upon successful completion, the function rmdir() shall return 0. */
+  return 0;
+}
