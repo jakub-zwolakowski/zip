@@ -5942,6 +5942,8 @@ mz_bool mz_zip_writer_init_from_reader(mz_zip_archive *pZip,
     pZip->m_pWrite = mz_zip_file_write_func;
     if (NULL ==
       #ifdef __TRUSTINSOFT_ANALYZER__
+        /* This will not be necessary after deploying MR782
+           https://git.trust-in-soft.com/trust/tis-analyzer/-/merge_requests/782 */
         (pState->m_pFile = fopen(pFilename, "r+b"))) {
       #else
         (pState->m_pFile = MZ_FREOPEN(pFilename, "r+b", pState->m_pFile))) {

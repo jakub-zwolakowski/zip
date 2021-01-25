@@ -15,6 +15,7 @@ int mkdir(const char *path, mode_t mode) {
   return 0;
 }
 
+/* STASHED THE ISSUE */
 void tis_make_unknown(char *__p, unsigned long __l) {
   return;
 }
