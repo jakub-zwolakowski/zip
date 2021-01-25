@@ -687,9 +687,7 @@ int main(int argc, char *argv[]) {
   remove(ZIPNAME);
 
   test_write();
-#ifndef __TRUSTINSOFT_ANALYZER__
   test_append();
-#endif
   test_read();
   test_extract();
   test_total_entries();
