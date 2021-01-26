@@ -10,7 +10,7 @@
 /* Create a new zip archive with default compression level. */
 
 /* REQUIRES: foo-2.1.txt, foo-2.2.txt, foo-2.3.txt */
-void create (void) {
+int create (void) {
     struct zip_t *zip = zip_open("foo.zip", ZIP_DEFAULT_COMPRESSION_LEVEL, 'w');
     {
         zip_entry_open(zip, "foo-1.txt");
@@ -30,13 +30,15 @@ void create (void) {
         zip_entry_close(zip);
     }
     zip_close(zip);
+
+    return 0;
 }
 
 
 /* Append to the existing zip archive. */
 
 /* REQUIRES: foo.zip */
-void append (void) {
+int append (void) {
     struct zip_t *zip = zip_open("foo.zip", ZIP_DEFAULT_COMPRESSION_LEVEL, 'a');
     {
         zip_entry_open(zip, "foo-3.txt");
@@ -47,6 +49,8 @@ void append (void) {
         zip_entry_close(zip);
     }
     zip_close(zip);
+
+    return 0;
 }
 
 
@@ -61,16 +65,16 @@ int on_extract_entry(const char *filename, void *arg) {
 }
 
 /* REQUIRES: foo.zip */
-void extract_into_a_folder (void) {
+int extract_into_a_folder (void) {
     int arg = 2;
-    zip_extract("foo.zip", "/tmp", on_extract_entry, &arg);
+    return zip_extract("foo.zip", "/tmp", on_extract_entry, &arg);
 }
 
 
 /* Extract a zip entry into memory. */
 
 /* REQUIRES: foo.zip */
-void extract_into_memory (void) {
+int extract_into_memory (void) {
     void *buf = NULL;
     size_t bufsize;
 
@@ -85,13 +89,15 @@ void extract_into_memory (void) {
     zip_close(zip);
 
     free(buf);
+
+    return 0;
 }
 
 
 /* Extract a zip entry into memory (no internal allocation). */
 
 /* REQUIRES: foo.zip */
-void extract_into_memory_no_allocation (void) {
+int extract_into_memory_no_allocation (void) {
     unsigned char *buf;
     size_t bufsize;
 
@@ -109,13 +115,15 @@ void extract_into_memory_no_allocation (void) {
     zip_close(zip);
 
     free(buf);
+
+    return 0;
 }
 
 
 /* Extract a zip entry into a file. */
 
 /* REQUIRES: foo.zip */
-void extract_entry_into_a_file (void) {
+int extract_entry_into_a_file (void) {
     struct zip_t *zip = zip_open("foo.zip", 0, 'r');
     {
         zip_entry_open(zip, "foo-2.txt");
@@ -125,13 +133,15 @@ void extract_entry_into_a_file (void) {
         zip_entry_close(zip);
     }
     zip_close(zip);
+
+    return 0;
 }
 
 
 /* List of all zip entries. */
 
 /* REQUIRES: foo.zip */
-void list_all_entries (void) {
+int list_all_entries (void) {
     struct zip_t *zip = zip_open("foo.zip", 0, 'r');
     int i, n = zip_total_entries(zip);
     for (i = 0; i < n; ++i) {
@@ -145,12 +155,14 @@ void list_all_entries (void) {
         zip_entry_close(zip);
     }
     zip_close(zip);
+
+    return 0;
 }
 
 
 /* Compress folder (recursively). */
 
-void zip_walk(struct zip_t *zip, const char *path) {
+int zip_walk(struct zip_t *zip, const char *path) {
     DIR *dir;
     struct dirent *entry;
     char fullpath[MAX_PATH];
@@ -177,9 +189,13 @@ void zip_walk(struct zip_t *zip, const char *path) {
     }
 
     closedir(dir);
+
+    return 0;
 }
 
-void compress_folder_recursively(void) {}
+int compress_folder_recursively(void) {
+    return 0;
+}
 
 /* Prepare the expected foo.zip file. */
 int main(void) {
