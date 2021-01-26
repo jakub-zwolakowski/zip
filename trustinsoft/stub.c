@@ -15,7 +15,8 @@ int mkdir(const char *path, mode_t mode) {
   return 0;
 }
 
-/* STASHED THE ISSUE */
+/* This will not be necessary after solving TRUS-2308:
+   https://support.trust-in-soft.com/browse/TRUS-2308 */
 void tis_make_unknown(char *__p, unsigned long __l) {
   return;
 }
