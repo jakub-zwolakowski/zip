@@ -11,27 +11,38 @@
 
 /* REQUIRES: foo-2.1.txt, foo-2.2.txt, foo-2.3.txt */
 int create (void) {
+    int result = 0;
+
     struct zip_t *zip = zip_open("foo.zip", ZIP_DEFAULT_COMPRESSION_LEVEL, 'w');
     {
-        zip_entry_open(zip, "foo-1.txt");
+        result = zip_entry_open(zip, "foo-1.txt");
+        if (result != 0) goto create_done;
         {
             const char *buf = "Some data here...\0";
-            zip_entry_write(zip, buf, strlen(buf));
+            result = zip_entry_write(zip, buf, strlen(buf));
+            if (result != 0) goto create_done;
         }
-        zip_entry_close(zip);
+        result = zip_entry_close(zip);
+        if (result != 0) goto create_done;
 
-        zip_entry_open(zip, "foo-2.txt");
+        result = zip_entry_open(zip, "foo-2.txt");
+        if (result != 0) goto create_done;
         {
             // merge 3 files into one entry and compress them on-the-fly.
-            zip_entry_fwrite(zip, "foo-2.1.txt");
-            zip_entry_fwrite(zip, "foo-2.2.txt");
-            zip_entry_fwrite(zip, "foo-2.3.txt");
+            result = zip_entry_fwrite(zip, "foo-2.1.txt");
+            if (result != 0) goto create_done;
+            result = zip_entry_fwrite(zip, "foo-2.2.txt");
+            if (result != 0) goto create_done;
+            result = zip_entry_fwrite(zip, "foo-2.3.txt");
+            if (result != 0) goto create_done;
         }
-        zip_entry_close(zip);
+        result = zip_entry_close(zip);
+        if (result != 0) goto create_done;
     }
     zip_close(zip);
 
-    return 0;
+create_done:
+    return result;
 }
 
 
@@ -39,18 +50,24 @@ int create (void) {
 
 /* REQUIRES: foo.zip */
 int append (void) {
+    int result = 0;
+
     struct zip_t *zip = zip_open("foo.zip", ZIP_DEFAULT_COMPRESSION_LEVEL, 'a');
     {
-        zip_entry_open(zip, "foo-3.txt");
+        result = zip_entry_open(zip, "foo-3.txt");
+        if (result != 0) goto append_done;
         {
             const char *buf = "Append some data here...\0";
-            zip_entry_write(zip, buf, strlen(buf));
+            result = zip_entry_write(zip, buf, strlen(buf));
+            if (result != 0) goto append_done;
         }
-        zip_entry_close(zip);
+        result = zip_entry_close(zip);
+        if (result != 0) goto append_done;
     }
     zip_close(zip);
 
-    return 0;
+append_done:
+    return result;
 }
 
 
@@ -60,7 +77,6 @@ int on_extract_entry(const char *filename, void *arg) {
     static int i = 0;
     int n = *(int *)arg;
     printf("Extracted: %s (%d of %d)\n", filename, ++i, n);
-
     return 0;
 }
 
@@ -75,22 +91,28 @@ int extract_into_a_folder (void) {
 
 /* REQUIRES: foo.zip */
 int extract_into_memory (void) {
+    int result = 0;
+
     void *buf = NULL;
     size_t bufsize;
 
     struct zip_t *zip = zip_open("foo.zip", 0, 'r');
     {
-        zip_entry_open(zip, "foo-1.txt");
+        result = zip_entry_open(zip, "foo-1.txt");
+        if (result != 0) goto extract_into_memory_done;
         {
-            zip_entry_read(zip, &buf, &bufsize);
+            result = zip_entry_read(zip, &buf, &bufsize);
+            if (result != 0) goto extract_into_memory_done;
         }
-        zip_entry_close(zip);
+        result = zip_entry_close(zip);
+        if (result != 0) goto extract_into_memory_done;
     }
     zip_close(zip);
 
     free(buf);
 
-    return 0;
+extract_into_memory_done:
+    return result;
 }
 
 
@@ -98,25 +120,31 @@ int extract_into_memory (void) {
 
 /* REQUIRES: foo.zip */
 int extract_into_memory_no_allocation (void) {
+    int result = 0;
+
     unsigned char *buf;
     size_t bufsize;
 
     struct zip_t *zip = zip_open("foo.zip", 0, 'r');
     {
-        zip_entry_open(zip, "foo-1.txt");
+        result = zip_entry_open(zip, "foo-1.txt");
+        if (result != 0) goto extract_into_memory_no_allocation_done;
         {
             bufsize = zip_entry_size(zip);
             buf = calloc(sizeof(unsigned char), bufsize);
 
-            zip_entry_noallocread(zip, (void *)buf, bufsize);
+            result = zip_entry_noallocread(zip, (void *)buf, bufsize);
+            if (result != 0) goto extract_into_memory_no_allocation_done;
         }
-        zip_entry_close(zip);
+        result = zip_entry_close(zip);
+        if (result != 0) goto extract_into_memory_no_allocation_done;
     }
     zip_close(zip);
 
     free(buf);
 
-    return 0;
+extract_into_memory_no_allocation_done:
+    return result;
 }
 
 
@@ -124,17 +152,23 @@ int extract_into_memory_no_allocation (void) {
 
 /* REQUIRES: foo.zip */
 int extract_entry_into_a_file (void) {
+    int result = 0;
+
     struct zip_t *zip = zip_open("foo.zip", 0, 'r');
     {
-        zip_entry_open(zip, "foo-2.txt");
+        result = zip_entry_open(zip, "foo-2.txt");
+        if (result != 0) goto extract_entry_into_a_file_done;
         {
-            zip_entry_fread(zip, "foo-2.txt");
+            result = zip_entry_fread(zip, "foo-2.txt");
+            if (result != 0) goto extract_entry_into_a_file_done;
         }
-        zip_entry_close(zip);
+        result = zip_entry_close(zip);
+        if (result != 0) goto extract_entry_into_a_file_done;
     }
     zip_close(zip);
 
-    return 0;
+extract_entry_into_a_file_done:
+    return result;
 }
 
 
@@ -142,21 +176,26 @@ int extract_entry_into_a_file (void) {
 
 /* REQUIRES: foo.zip */
 int list_all_entries (void) {
+    int result = 0;
+
     struct zip_t *zip = zip_open("foo.zip", 0, 'r');
     int i, n = zip_total_entries(zip);
     for (i = 0; i < n; ++i) {
-        zip_entry_openbyindex(zip, i);
+        result = zip_entry_openbyindex(zip, i);
+        if (result != 0) goto list_all_entries_done;
         {
             const char *name = zip_entry_name(zip);
             int isdir = zip_entry_isdir(zip);
             unsigned long long size = zip_entry_size(zip);
             unsigned int crc32 = zip_entry_crc32(zip);
         }
-        zip_entry_close(zip);
+        result = zip_entry_close(zip);
+        if (result != 0) goto list_all_entries_done;
     }
     zip_close(zip);
 
-    return 0;
+list_all_entries_done:
+    return result;
 }
 
 
