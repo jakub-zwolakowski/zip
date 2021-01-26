@@ -7,7 +7,7 @@
 
 #include "zip.h"
 
-/* Create a new zip archive with default compression level. */
+/* -- Create a new zip archive with default compression level. -- */
 
 /* REQUIRES: foo-2.1.txt, foo-2.2.txt, foo-2.3.txt */
 int create (void) {
@@ -46,7 +46,7 @@ create_done:
 }
 
 
-/* Append to the existing zip archive. */
+/* -- Append to the existing zip archive. -- */
 
 /* REQUIRES: foo.zip */
 int append (void) {
@@ -71,7 +71,7 @@ append_done:
 }
 
 
-/* Extract a zip archive into a folder. */
+/* -- Extract a zip archive into a folder. -- */
 
 int on_extract_entry(const char *filename, void *arg) {
     static int i = 0;
@@ -87,7 +87,7 @@ int extract_into_a_folder (void) {
 }
 
 
-/* Extract a zip entry into memory. */
+/* -- Extract a zip entry into memory. -- */
 
 /* REQUIRES: foo.zip */
 int extract_into_memory (void) {
@@ -116,7 +116,7 @@ extract_into_memory_done:
 }
 
 
-/* Extract a zip entry into memory (no internal allocation). */
+/* -- Extract a zip entry into memory (no internal allocation). -- */
 
 /* REQUIRES: foo.zip */
 int extract_into_memory_no_allocation (void) {
@@ -148,7 +148,7 @@ extract_into_memory_no_allocation_done:
 }
 
 
-/* Extract a zip entry into a file. */
+/* -- Extract a zip entry into a file. -- */
 
 /* REQUIRES: foo.zip */
 int extract_entry_into_a_file (void) {
@@ -172,7 +172,7 @@ extract_entry_into_a_file_done:
 }
 
 
-/* List of all zip entries. */
+/* -- List of all zip entries. -- */
 
 /* REQUIRES: foo.zip */
 int list_all_entries (void) {
@@ -188,6 +188,7 @@ int list_all_entries (void) {
             int isdir = zip_entry_isdir(zip);
             unsigned long long size = zip_entry_size(zip);
             unsigned int crc32 = zip_entry_crc32(zip);
+            printf("%s, is_dir=%d, size=%llu, crc32=%u\n", name, isdir, size, crc32);
         }
         result = zip_entry_close(zip);
         if (result != 0) goto list_all_entries_done;
@@ -199,7 +200,7 @@ list_all_entries_done:
 }
 
 
-/* Compress folder (recursively). */
+/* -- Compress folder (recursively). -- */
 
 int zip_walk(struct zip_t *zip, const char *path) {
     DIR *dir;
@@ -207,6 +208,7 @@ int zip_walk(struct zip_t *zip, const char *path) {
     char fullpath[MAX_PATH];
     struct stat s;
 
+    printf("zip_walk: BEGIN %s\n", path);
     memset(fullpath, 0, MAX_PATH);
     dir = opendir(path);
     assert(dir);
@@ -218,9 +220,12 @@ int zip_walk(struct zip_t *zip, const char *path) {
 
       snprintf(fullpath, sizeof(fullpath), "%s/%s", path, entry->d_name);
       stat(fullpath, &s);
-      if (S_ISDIR(s.st_mode))
+      if (S_ISDIR(s.st_mode)) {
+        printf("zip_walk: WALK %s\n", fullpath);
         zip_walk(zip, fullpath);
+      }
       else {
+        printf("zip_walk: WRITE %s\n", fullpath);
         zip_entry_open(zip, fullpath);
         zip_entry_fwrite(zip, fullpath);
         zip_entry_close(zip);
@@ -228,15 +233,22 @@ int zip_walk(struct zip_t *zip, const char *path) {
     }
 
     closedir(dir);
+    printf("zip_walk: END %s\n", path);
 
     return 0;
 }
 
 int compress_folder_recursively(void) {
-    return 0;
+    int result = 0;
+    struct zip_t *zip = zip_open("foo.zip", ZIP_DEFAULT_COMPRESSION_LEVEL, 'w');
+    char path[] = "input";
+    result = zip_walk(zip, path);
+    zip_close(zip);
+    return result;
 }
 
-/* Prepare the expected foo.zip file. */
+
+/* -- Prepare the expected "foo.zip" file. -- */
 int main(void) {
     create();
     append();
