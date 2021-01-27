@@ -1423,7 +1423,11 @@ static int delete_entries(struct zip_t *zip,
       deleted_entry_num++;
     }
 
+  #ifdef __TRUSTINSOFT_BUGFIX__
+    while ((i < entry_num) && (entry_mark_array[i].type == MZ_MOVE)) {
+  #else
     while ((entry_mark_array[i].type == MZ_MOVE) && (i < entry_num)) {
+  #endif
       move_length += entry_mark_array[i].lf_length;
       mz_uint8 *p = &MZ_ZIP_ARRAY_ELEMENT(
           &pState->m_central_dir, mz_uint8,
