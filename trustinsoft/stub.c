@@ -10,9 +10,13 @@ int chmod(const char *pathname, mode_t mode) {
   return 0;
 }
 
+#include <unistd.h>
+
+/* Upon successful completion, mkdir() shall return 0. */
 int mkdir(const char *path, mode_t mode) {
-  /* Upon successful completion, mkdir() shall return 0. */
-  return 0;
+  /* Creating directories is Not Implemented Yet, so we only check if the
+     directory exists already. */
+  return access(path, F_OK);
 }
 
 /* This will not be necessary after solving TRUS-2308:
