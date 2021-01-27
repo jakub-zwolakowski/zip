@@ -5158,12 +5158,18 @@ mz_bool mz_zip_reader_file_stat(mz_zip_archive *pZip, mz_uint file_index,
   n = MZ_READ_LE16(p + MZ_ZIP_CDH_COMMENT_LEN_OFS);
   n = MZ_MIN(n, MZ_ZIP_MAX_ARCHIVE_FILE_COMMENT_SIZE - 1);
   pStat->m_comment_size = n;
+#ifdef __TRUSTINSOFT_BUGFIX__
+  if (n > 0) {
+#endif
   memcpy(pStat->m_comment,
          p + MZ_ZIP_CENTRAL_DIR_HEADER_SIZE +
              MZ_READ_LE16(p + MZ_ZIP_CDH_FILENAME_LEN_OFS) +
              MZ_READ_LE16(p + MZ_ZIP_CDH_EXTRA_LEN_OFS),
          n);
   pStat->m_comment[n] = '\0';
+#ifdef __TRUSTINSOFT_BUGFIX__
+  }
+#endif
 
   return MZ_TRUE;
 }
