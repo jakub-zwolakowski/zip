@@ -519,7 +519,9 @@ static void test_extract_stream(void) {
   zip_close(zip);
 
   remove(RFILE);
+#ifndef __TRUSTINSOFT_ANALYZER__
   remove("dotfiles/.test\0");
+#endif
 
   FILE *fp = NULL;
   fp = fopen(ZIPNAME, "rb+");
