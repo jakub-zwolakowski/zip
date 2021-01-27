@@ -5152,8 +5152,14 @@ mz_bool mz_zip_reader_file_stat(mz_zip_archive *pZip, mz_uint file_index,
   // Copy as much of the filename and comment as possible.
   n = MZ_READ_LE16(p + MZ_ZIP_CDH_FILENAME_LEN_OFS);
   n = MZ_MIN(n, MZ_ZIP_MAX_ARCHIVE_FILENAME_SIZE - 1);
+#ifdef __TRUSTINSOFT_BUGFIX__
+  if (n > 0) {
+#endif
   memcpy(pStat->m_filename, p + MZ_ZIP_CENTRAL_DIR_HEADER_SIZE, n);
   pStat->m_filename[n] = '\0';
+#ifdef __TRUSTINSOFT_BUGFIX__
+  }
+#endif
 
   n = MZ_READ_LE16(p + MZ_ZIP_CDH_COMMENT_LEN_OFS);
   n = MZ_MIN(n, MZ_ZIP_MAX_ARCHIVE_FILE_COMMENT_SIZE - 1);
