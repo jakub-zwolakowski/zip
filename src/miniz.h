@@ -221,6 +221,12 @@
 #ifndef MINIZ_HEADER_INCLUDED
 #define MINIZ_HEADER_INCLUDED
 
+#ifdef __TRUSTINSOFT_ANALYZER__
+/* TODO: Maybe we can do this with the pre-processor options? */
+#undef _LARGEFILE64_SOURCE
+#define _LARGEFILE64_SOURCE 0
+#endif
+
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -5932,7 +5938,13 @@ mz_bool mz_zip_writer_init_from_reader(mz_zip_archive *pZip,
       return MZ_FALSE;
     pZip->m_pWrite = mz_zip_file_write_func;
     if (NULL ==
+      #ifdef __TRUSTINSOFT_TMPBUG__
+        /* This will not be necessary after deploying MR782
+           https://git.trust-in-soft.com/trust/tis-analyzer/-/merge_requests/782 */
+        (pState->m_pFile = fopen(pFilename, "r+b"))) {
+      #else
         (pState->m_pFile = MZ_FREOPEN(pFilename, "r+b", pState->m_pFile))) {
+      #endif
       // The mz_zip_archive is now in a bogus state because pState->m_pFile is
       // NULL, so just close it.
       mz_zip_reader_end(pZip);

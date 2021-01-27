@@ -519,7 +519,10 @@ static void test_extract_stream(void) {
   zip_close(zip);
 
   remove(RFILE);
+#ifndef __TRUSTINSOFT_TMPBUG__
+  /* Disabled due to TIS-CI current file-handling limitations. */
   remove("dotfiles/.test\0");
+#endif
 
   FILE *fp = NULL;
   fp = fopen(ZIPNAME, "rb+");
@@ -696,11 +699,14 @@ int main(int argc, char *argv[]) {
   test_entry_openbyindex();
   test_list_entries();
   test_fwrite();
+#ifndef __TRUSTINSOFT_TMPBUG__
+  /* Disabled due to TIS-CI current file-handling limitations. */
   test_read_permissions();
   test_write_permissions();
   test_exe_permissions();
   test_mtime();
   test_unix_permissions();
+#endif
   test_extract_stream();
   test_open_stream();
   test_entries_delete();
