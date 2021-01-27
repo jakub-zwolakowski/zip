@@ -1367,7 +1367,11 @@ static int delete_central_dir_entries(mz_zip_internal_state *pState,
 
   i = 0;
   while (i < entry_num) {
+  #ifdef __TRUSTINSOFT_BUGFIX__
+    while ((i < entry_num) && (!deleted_entry_index_array[i])) {
+  #else
     while ((!deleted_entry_index_array[i]) && (i < entry_num)) {
+  #endif
       i++;
     }
     begin = i;
