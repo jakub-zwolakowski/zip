@@ -15,7 +15,7 @@ int chmod(const char *pathname, mode_t mode) {
 
 /* Upon successful completion, mkdir() shall return 0. */
 int mkdir(const char *path, mode_t mode) {
-  /* Creating directories is Not Implemented Yet, so we only check if the
+  /* Creating directories is NIY (Not Implemented Yet), so we only check if the
      directory exists already. */
   if (strcmp(path, ".") == 0) return 0;
   return access(path, F_OK);
