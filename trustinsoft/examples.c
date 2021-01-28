@@ -268,7 +268,7 @@ zip_walk_done:
 int compress_folder_recursively(void) {
     int result = 0;
     struct zip_t *zip = zip_open("foo.zip", ZIP_DEFAULT_COMPRESSION_LEVEL, 'w');
-    char path[] = "input";
+    char path[] = "compress_me";
     result = zip_walk(zip, path);
     zip_close(zip);
     return result;
