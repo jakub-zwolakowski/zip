@@ -38,7 +38,12 @@ machdeps = [
         "machdep": "gcc_x86_32",
         "pretty_name": "little endian 32-bit (x86)",
         "fields": {
-            "address-alignment": 32
+            "address-alignment": 32,
+            "cpp-extra-args": [
+                "-U__x86_64__",
+                "-U_LP64",
+                "-U__LP64__"
+            ],
         }
     },
     {
@@ -52,7 +57,12 @@ machdeps = [
         "machdep": "gcc_ppc_32",
         "pretty_name": "big endian 32-bit (PPC32)",
         "fields": {
-            "address-alignment": 32
+            "address-alignment": 32,
+            "cpp-extra-args": [
+                "-U__x86_64__",
+                "-U_LP64",
+                "-U__LP64__"
+            ],
         },
     },
     {
