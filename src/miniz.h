@@ -221,10 +221,11 @@
 #ifndef MINIZ_HEADER_INCLUDED
 #define MINIZ_HEADER_INCLUDED
 
-#ifdef __TRUSTINSOFT_ANALYZER__
-/* TODO: Maybe we can do this with the pre-processor options? */
+#ifdef __TRUSTINSOFT_TMPBUG__
+  /* This will not be necessary after deploying MR794
+     https://git.trust-in-soft.com/trust/tis-analyzer/-/merge_requests/794 */
 #undef _LARGEFILE64_SOURCE
-#define _LARGEFILE64_SOURCE 0
+#define _LARGEFILE64_SOURCE 1
 #endif
 
 #include <stdint.h>
@@ -4204,7 +4205,8 @@ static FILE *mz_freopen(const char *pPath, const char *pMode, FILE *pStream) {
 #define MZ_FFLUSH fflush
 #define MZ_FREOPEN(f, m, s) freopen(f, m, s)
 #define MZ_DELETE_FILE remove
-#elif defined(__GNUC__) && _LARGEFILE64_SOURCE
+#elif defined(__GNUC__) && _LARGEFILE64_SOURCE \
+ && !defined(__TRUSTINSOFT_ANALYZER__)
 #ifndef MINIZ_NO_TIME
 #include <utime.h>
 #endif
