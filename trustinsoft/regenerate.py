@@ -61,7 +61,7 @@ machdeps = [
             "cpp-extra-args": [
                 "-U__x86_64__",
                 "-U_LP64",
-                "-U__LP64__"
+                "-U__LP64__",
             ],
         },
     },
@@ -69,7 +69,12 @@ machdeps = [
         "machdep": "gcc_ppc_64",
         "pretty_name": "big endian 64-bit (PPC64)",
         "fields": {
-            "address-alignment": 64
+            "address-alignment": 64,
+            "cpp-extra-args": [
+                "-U__x86_64__",
+                "-U_LP64",
+                "-U__LP64__",
+            ],
         },
     },
 ]
