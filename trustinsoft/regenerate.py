@@ -40,9 +40,7 @@ machdeps = [
         "fields": {
             "address-alignment": 32,
             "cpp-extra-args": [
-                "-U__x86_64__",
-                "-U_LP64",
-                "-U__LP64__"
+                "-DMINIZ_USE_UNALIGNED_LOADS_AND_STORES=0"
             ],
         }
     },
@@ -59,9 +57,7 @@ machdeps = [
         "fields": {
             "address-alignment": 32,
             "cpp-extra-args": [
-                "-U__x86_64__",
-                "-U_LP64",
-                "-U__LP64__",
+                "-DMINIZ_USE_UNALIGNED_LOADS_AND_STORES=0",
             ],
         },
     },
@@ -71,9 +67,7 @@ machdeps = [
         "fields": {
             "address-alignment": 64,
             "cpp-extra-args": [
-                "-U__x86_64__",
-                "-U_LP64",
-                "-U__LP64__",
+                "-DMINIZ_USE_UNALIGNED_LOADS_AND_STORES=0",
             ],
         },
     },
